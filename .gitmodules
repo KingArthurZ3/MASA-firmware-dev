@@ -1,0 +1,6 @@
+[submodule "Core/Lib/firmware-libraries"]
+	path = Core/Lib/firmware-libraries
+	url = https://gitlab.eecs.umich.edu/masa/avionics/firmware-libraries.git
+[submodule "Core/firmware-libraries"]
+	path = Core/firmware-libraries
+	url = https://gitlab.eecs.umich.edu/masa/avionics/firmware-libraries.git
