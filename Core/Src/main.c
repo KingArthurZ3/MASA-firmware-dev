@@ -60,7 +60,7 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+SPI_HandleTypeDef hspi1;
 /* USER CODE END 0 */
 
 /**
@@ -96,6 +96,16 @@ int main(void)
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
   HAL_TIM_Base_Start_IT(&htim2);
+
+  // Initialize ADC dev board
+  GPIO_ADC_Pinfo adc_pins;
+  adc_pins->ADC_CS_PORT[0] 		= SPI_ADC0_CS_GPIO_Port;
+  adc_pins->ADC_EOC_PORT[0]		= SPI_EOC_GPIO_Port;
+  adc_pins->ADC_CNVST_PORT[0]	= SPI_CNVST_GPIO_Port;
+  adc_pins->ADC_CS_ADDR[0] 		= SPI_ADC0_CS_Pin;
+  adc_pins->ADC_EOC_ADDR[0]		= SPI_EOC_Pin;
+  adc_pins->ADC_CNVST_ADDR[0]	= SPI_CNVST_Pin;
+
   /* USER CODE END 2 */
  
  
@@ -250,7 +260,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, adc1_Pin|adc2_Pin|SPI_ADC0_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(CNVST_GPIO_Port, CNVST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SPI_CNVST_GPIO_Port, SPI_CNVST_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(adc0_GPIO_Port, adc0_Pin, GPIO_PIN_RESET);
@@ -262,12 +272,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : CNVST_Pin */
-  GPIO_InitStruct.Pin = CNVST_Pin;
+  /*Configure GPIO pin : SPI_CNVST_Pin */
+  GPIO_InitStruct.Pin = SPI_CNVST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(CNVST_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(SPI_CNVST_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : adc0_Pin */
   GPIO_InitStruct.Pin = adc0_Pin;
@@ -276,11 +286,11 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(adc0_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : EOC_Pin */
-  GPIO_InitStruct.Pin = EOC_Pin;
+  /*Configure GPIO pin : SPI_EOC_Pin */
+  GPIO_InitStruct.Pin = SPI_EOC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(EOC_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(SPI_EOC_GPIO_Port, &GPIO_InitStruct);
 
 }
 

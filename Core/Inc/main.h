@@ -32,6 +32,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "MAX11131.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -59,12 +60,12 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define adc1_Pin GPIO_PIN_10
 #define adc1_GPIO_Port GPIOB
-#define CNVST_Pin GPIO_PIN_7
-#define CNVST_GPIO_Port GPIOC
+#define SPI_CNVST_Pin GPIO_PIN_7
+#define SPI_CNVST_GPIO_Port GPIOC
 #define adc0_Pin GPIO_PIN_8
 #define adc0_GPIO_Port GPIOA
-#define EOC_Pin GPIO_PIN_9
-#define EOC_GPIO_Port GPIOA
+#define SPI_EOC_Pin GPIO_PIN_9
+#define SPI_EOC_GPIO_Port GPIOA
 #define adc2_Pin GPIO_PIN_4
 #define adc2_GPIO_Port GPIOB
 #define SPI_ADC0_CS_Pin GPIO_PIN_6
