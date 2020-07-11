@@ -23,7 +23,6 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,7 +59,8 @@ static void MX_SPI1_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-SPI_HandleTypeDef hspi1;
+volatile int read_adc_now = 0;
+volatile uint16_t adc_values[14] = {0};
 /* USER CODE END 0 */
 
 /**
@@ -98,14 +98,16 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim2);
 
   // Initialize ADC dev board
-  GPIO_ADC_Pinfo adc_pins;
-  adc_pins->ADC_CS_PORT[0] 		= SPI_ADC0_CS_GPIO_Port;
-  adc_pins->ADC_EOC_PORT[0]		= SPI_EOC_GPIO_Port;
-  adc_pins->ADC_CNVST_PORT[0]	= SPI_CNVST_GPIO_Port;
-  adc_pins->ADC_CS_ADDR[0] 		= SPI_ADC0_CS_Pin;
-  adc_pins->ADC_EOC_ADDR[0]		= SPI_EOC_Pin;
-  adc_pins->ADC_CNVST_ADDR[0]	= SPI_CNVST_Pin;
+  GPIO_MAX31_Pinfo adc_pins;
+  adc_pins.MAX31_CS_PORT[0] 		= SPI_ADC0_CS_GPIO_Port;
+  adc_pins.MAX31_EOC_PORT[0]		= SPI_EOC_GPIO_Port;
+  adc_pins.MAX31_CNVST_PORT[0]		= SPI_CNVST_GPIO_Port;
+  adc_pins.MAX31_CS_ADDR[0] 		= SPI_ADC0_CS_Pin;
+  adc_pins.MAX31_EOC_ADDR[0]		= SPI_EOC_Pin;
+  adc_pins.MAX31_CNVST_ADDR[0]		= SPI_CNVST_Pin;
+  adc_pins.NUM_ADCS	= 1;
 
+  init_adc(&hspi1, &adc_pins);
   /* USER CODE END 2 */
  
  
@@ -117,6 +119,13 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	if (read_adc_now) {
+		HAL_GPIO_WritePin(adc0_GPIO_Port, adc0_Pin, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(adc1_GPIO_Port, adc1_Pin, GPIO_PIN_RESET);
+		HAL_GPIO_WritePin(adc2_GPIO_Port, adc2_Pin, GPIO_PIN_RESET);
+		read_adc(&hspi1, 0, adc_values);
+		read_adc_now = 0;
+	}
   }
   /* USER CODE END 3 */
 }
@@ -179,8 +188,8 @@ static void MX_SPI1_Init(void)
   hspi1.Init.Mode = SPI_MODE_MASTER;
   hspi1.Init.Direction = SPI_DIRECTION_2LINES;
   hspi1.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi1.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi1.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
   hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
@@ -254,37 +263,29 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOC_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, adc1_Pin|adc2_Pin|SPI_ADC0_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, SPI_ADC0_CS_Pin|SPI_CNVST_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SPI_CNVST_GPIO_Port, SPI_CNVST_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, adc1_Pin|adc0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(adc0_GPIO_Port, adc0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(adc2_GPIO_Port, adc2_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : adc1_Pin adc2_Pin SPI_ADC0_CS_Pin */
-  GPIO_InitStruct.Pin = adc1_Pin|adc2_Pin|SPI_ADC0_CS_Pin;
+  /*Configure GPIO pins : SPI_ADC0_CS_Pin adc2_Pin SPI_CNVST_Pin */
+  GPIO_InitStruct.Pin = SPI_ADC0_CS_Pin|adc2_Pin|SPI_CNVST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : adc1_Pin adc0_Pin */
+  GPIO_InitStruct.Pin = adc1_Pin|adc0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : SPI_CNVST_Pin */
-  GPIO_InitStruct.Pin = SPI_CNVST_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(SPI_CNVST_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : adc0_Pin */
-  GPIO_InitStruct.Pin = adc0_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(adc0_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : SPI_EOC_Pin */
   GPIO_InitStruct.Pin = SPI_EOC_Pin;

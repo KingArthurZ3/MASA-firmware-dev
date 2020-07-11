@@ -1,6 +1,6 @@
-Core/firmware-libraries/MAX11131/MAX11131.o: \
- ../Core/firmware-libraries/MAX11131/MAX11131.c \
- ../Core/firmware-libraries/MAX11131/MAX11131.h \
+Core/firmware-libraries/MAX11131/src/MAX11131.o: \
+ ../Core/firmware-libraries/MAX11131/src/MAX11131.c \
+ ../Core/firmware-libraries/MAX11131/src/../inc/MAX11131.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h \
  ../Core/Inc/stm32f4xx_hal_conf.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h \
@@ -30,7 +30,7 @@ Core/firmware-libraries/MAX11131/MAX11131.o: \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h \
  ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 
-../Core/firmware-libraries/MAX11131/MAX11131.h:
+../Core/firmware-libraries/MAX11131/src/../inc/MAX11131.h:
 
 ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h:
 

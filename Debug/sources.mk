@@ -19,6 +19,6 @@ OBJCOPY_BIN :=
 SUBDIRS := \
 Core/Src \
 Core/Startup \
-Core/firmware-libraries/MAX11131 \
+Core/firmware-libraries/MAX11131/src \
 Drivers/STM32F4xx_HAL_Driver/Src \
 
