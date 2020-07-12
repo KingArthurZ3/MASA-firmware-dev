@@ -114,15 +114,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
   while (1)
   {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
 	if (read_adc_now) {
-		HAL_GPIO_WritePin(adc0_GPIO_Port, adc0_Pin, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(adc1_GPIO_Port, adc1_Pin, GPIO_PIN_RESET);
-		HAL_GPIO_WritePin(adc2_GPIO_Port, adc2_Pin, GPIO_PIN_RESET);
 		read_adc(&hspi1, 0, adc_values);
 		read_adc_now = 0;
 	}
@@ -268,10 +266,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, SPI_ADC0_CS_Pin|SPI_CNVST_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, adc1_Pin|adc0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(adc1_GPIO_Port, adc1_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(adc2_GPIO_Port, adc2_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(adc0_GPIO_Port, adc0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : SPI_ADC0_CS_Pin adc2_Pin SPI_CNVST_Pin */
   GPIO_InitStruct.Pin = SPI_ADC0_CS_Pin|adc2_Pin|SPI_CNVST_Pin;
